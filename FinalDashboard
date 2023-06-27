@@ -1,0 +1,88 @@
+!pip install dash
+!pip install dash-core-components
+!pip install dash-html-components
+import plotly.graph_objects as go
+import plotly.figure_factory as ff
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import plotly.figure_factory as ff
+import dash
+from dash import dcc
+from dash import html
+
+# Read the data
+data_train = pd.read_csv(r"C:\Users\Dell\Downloads\train (2).csv")
+
+# Create the app
+app = dash.Dash(__name__)
+
+heatmap = go.Heatmap(
+    z=data_train.corr(),
+    x=data_train.columns,
+    y=data_train.columns,
+    colorscale='Viridis'
+)
+
+histogram = ff.create_distplot([data_train['SalePrice']], ['SalePrice'], colors=['blue'])
+
+# Define the layout
+app.layout = html.Div(
+    children=[
+        html.H1('House Prices Dashboard'),
+        
+        # Scatter plot
+        dcc.Graph(
+            id='scatter-plot',
+            figure=px.scatter(data_train, x='YrSold', y='SalePrice', title='Scatter Plot')
+        ),
+     
+        html.P("From the scatterplot of the year houses were sold (X) and house sale prices(Y), The highest sale price of a house is in 2007 where it reached 755k dollar while the cheapest house is in 2009 that equals to 34.9k dollar."),
+        
+        # Scatter plot
+        dcc.Graph(
+            id='scatter-plot',
+            figure=px.scatter(data_train, x='YearBuilt', y='SalePrice', title='Scatter Plot')
+        ),
+        html.P("From the scatterplot of the year houses were built (X) and house sale prices(Y), The highest sale price of a house is in 1994 where it reached 755k dollar while the cheapest house is in  1920 that equals to 34.9k dollar."),
+        
+        # Scatter plot
+        dcc.Graph(
+            id='scatter-plot',
+            figure=px.scatter(data_train, x='LotArea', y='SalePrice', title='Scatter Plot')
+        ),
+        html.P("From the scatter plot of the lot area (X) and house sale prices (Y). The highest sale price of a house is 755k dollars where it reached 21.535k square feet while the larger lot area is 215.245k square feet with sale price is 375k dollars. the frequency of the most built house is less than 50k square feet with less than 200k dollars."),
+        
+        
+        # Scatter plot
+        dcc.Graph(
+            id='scatter-plot',
+            figure=px.scatter(data_train, x='HouseStyle', y='SalePrice', title='Scatter Plot')
+        ),   
+        html.P("From the scatterplot of the style of house (X) and house sale prices(Y), the highest selling price is 2 story type of house where it reached 755K dollar. Overall, we can see that 2 story house are the most expensive compared to the other 7 house style on average."),
+        
+        # Scatter plot
+        dcc.Graph(
+            id='scatter-plot',
+            figure=px.scatter(data_train, x='Neighborhood', y='SalePrice', title='Scatter Plot')
+        ),
+     
+        html.P("The most expensive neighborhood is at Northridge with the maximum price is $755k while the minimum selling price is $200k. The neighborhood with the most population of houses is at Northridge Height. The least population of houses is at Bluestem. "),
+        
+        # Heatmap
+        dcc.Graph(
+            id='heatmap',
+            figure=go.Figure(data=heatmap),
+            style={'width': '800px', 'height': '600px'}  # Adjust the width and height as needed
+        ),
+        html.P("From the scatter plot, the highest correlation between alley (X) and masonry veneer type (Y) is 0.8256675. masonry veneer type has a huge influence in the alley. The lowest correlation between landslope (X) and utilities (Y) is -0.4952515. It's because it didn't have an influence."),
+        
+        
+        # Footer
+        html.Footer('© 2023 - Haosu')
+    ]
+)
+
+# Run the app
+if __name__ == '__main__':
+    app.run_server(debug=False)
